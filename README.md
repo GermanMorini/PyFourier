@@ -14,14 +14,20 @@ que utiliza la función MIDI para calcular las notas en función de las frecuenc
 Por ejemplo, si tomamos las frecuencias mas dominantes que son son `2645`, `7043` y  `13228` vemos que son
 las notas `E, A, G#` (**Mi**, **La** y **Sol** sostenido)
 
+Incluye un script para la reducción de ruido mediante la utilización de un perfil de ruido
+
 ---
 
 ## Como usarlo
 
 ~~~bash
-source activate										# activa el entorno virtual
+source activate                                         # activa el entorno virtual
 
-python3 TRF.py bell.wav								# aplica la transformada de Fourier al archivo de audio
+python3 TRF.py bell.wav                                 # aplica la transformada de Fourier al archivo de audio
 
-python3 midi_func.py 2645 7043 13228 [...]  		# calcula las notas en función de las frecuencias ingresadas
+python3 midi_func.py 2645 7043 13228 [...]              # calcula las notas en función de las frecuencias ingresadas
+
+python3 data_to_sound.py bell.csv 1 1 0.2               # convierte los datos a sonido
+
+python3 noise_red.py sonido.wav perfil.wav salida.wav   # aplica un algoritmo de reducción de ruido
 ~~~

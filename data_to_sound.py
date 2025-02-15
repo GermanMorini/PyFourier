@@ -1,5 +1,6 @@
+#!/bin/python3
+
 import numpy as np
-import sounddevice as sd
 import pandas as pd
 from scipy.io.wavfile import write
 from sys import argv
@@ -32,9 +33,14 @@ except FileNotFoundError:
 t = np.linspace(0, duracion, int(tasa_muestreo * duracion), endpoint=False)
 onda = np.zeros_like(t)
 
+# Normalizar los valores de decibelios
+max_db = datos['amplitud'].max()
+datos['amplitud'] = datos['amplitud'] - max_db
+
 for _, fila in datos.iterrows():
     frecuencia = fila['frecuencia']
-    amplitud = fila['amplitud']
+    amplitud_db = fila['amplitud']
+    amplitud = 10 ** (amplitud_db / 20)
     onda += amplitud * np.cos(2 * np.pi * frecuencia * t)
 
 onda_normalizada = onda / np.max(np.abs(onda))
@@ -49,7 +55,5 @@ else:
     raise ValueError("Tipo de decaimiento no válido. Usar 'exponential' o 'linear'")
 
 onda_con_decaimiento = onda_normalizada * envelope
-
 onda_final = onda_con_decaimiento / np.max(np.abs(onda_con_decaimiento))
-
 write(nombre_archivo_salida, tasa_muestreo, (onda_final * 32767).astype(np.int16))
