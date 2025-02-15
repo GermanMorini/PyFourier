@@ -9,15 +9,16 @@ if len(argv) != 3:
     exit(1)
 
 dec_type = {
+    0: "none",
     1: "exponential",
     2: "linear"
 }
 
 archivo_csv = argv[1]
-duracion = 3.0
+duracion = 2.0
 tasa_muestreo = 44100
 decay_type = dec_type[int(argv[2])]
-decay_time = 0.5
+decay_time = 0.3
 nombre_archivo_salida = f"{archivo_csv}-reconstruido.wav"
 
 try:
@@ -42,6 +43,8 @@ if decay_type == "exponential":
     envelope = np.exp(-t / decay_time)
 elif decay_type == "linear":
     envelope = np.clip(1 - (t / decay_time), 0, None)
+elif decay_type == "none":
+    envelope = 1
 else:
     raise ValueError("Tipo de decaimiento no válido. Usar 'exponential' o 'linear'")
 
