@@ -4,6 +4,12 @@ from scipy.io import wavfile
 from sys import argv
 import numpy as np
 import matplotlib.pyplot as plt
+import logging as log
+
+log.basicConfig(
+    level=log.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 if len(argv) != 2:
     print(f"Uso: {argv[0]} ARCHIVO.wav")
@@ -22,28 +28,24 @@ mitad = n // 2
 magnitud = magnitud[:mitad]
 frecuencias = frecuencias[:mitad]
 
-plt.figure(figsize=(12, 12))
+log.info(f"Frecuencia de muestreo: {frecuencia_muestreo}")
+log.info(f"Cantidad de muestras de la señal: {n}")
+
+plt.figure(figsize=(10, 8))
 
 plt.subplot(2, 1, 1)
 plt.plot(frecuencias, magnitud)
-plt.title('Espectro de Frecuencia')
+plt.title('Espectro de Frecuencias (escala lineal)')
 plt.xlabel('Frecuencia (Hz)')
 plt.ylabel('Amplitud')
 plt.grid(True)
 plt.xlim(0, frecuencia_muestreo/2)
 
-magnitud_normalizada = magnitud / n
-magnitud_normalizada[magnitud_normalizada == 0] = 1e-10
-db = 20 * np.log10(magnitud_normalizada)
-
 plt.subplot(2, 1, 2)
-plt.plot(frecuencias, db)
-plt.title('Espectro de Frecuencia en Decibelios')
-plt.xlabel('Frecuencia (Hz)')
-plt.ylabel('Amplitud (dB)')
-plt.grid(True)
-plt.xlim(0, frecuencia_muestreo/2)
-plt.ylim(-120, 0)
+plt.specgram(senal, Fs=frecuencia_muestreo, NFFT=1024*4)
+plt.title('Espectrograma')
+plt.xlabel('Timepo (s)')
+plt.ylabel('Frecuencia (Hz)')
 
 plt.tight_layout()
 plt.show()
