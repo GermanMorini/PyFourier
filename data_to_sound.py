@@ -27,9 +27,8 @@ except FileNotFoundError:
 t = np.linspace(0, duracion, int(tasa_muestreo * duracion), endpoint=False)
 onda = np.zeros_like(t)
 
-# Normalizar los valores de decibelios
-# max_db = datos['amp'].max()
-# datos['amp'] = datos['amp'] - max_db
+# Normalizar los valores de amplitud (si NO estan en decibeles)
+# datos['amp'] = datos['amp'] / np.abs(datos['amp'].max())
 
 for _, fila in datos.iterrows():
     decay_type = fila['dec']
@@ -45,8 +44,8 @@ for _, fila in datos.iterrows():
         raise ValueError("Tipo de decaimiento no válido")
     
     frecuencia = fila['frec']
-    amplitud = 10 ** (fila['amp'] / 20)
-    # amplitud = fila['amp']
+    # amplitud = 20 * np.log10(fila['amp'])
+    amplitud = 10 ** (fila['amp'] * 0.05) # si tenemos los valores en decibeles
     onda += envelope * amplitud * np.cos(2 * np.pi * frecuencia * t)
 
 onda = onda / np.max(np.abs(onda))
